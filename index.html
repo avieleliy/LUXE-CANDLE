@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LUXE CANDLE - חנות בוטיק</title>
+    <style>
+        :root {
+            --bg-color: #fdfaf7; 
+            --card-bg: #ffffff; 
+            --accent-gold: #4a3f35; 
+            --text-main: #2d2621;
+            --soft-gray: #e8ded2;
+            --shadow: rgba(74, 63, 53, 0.1);
+            --bit-blue: #2D3A82;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0; 
+            background-color: var(--bg-color);
+            color: var(--text-main); 
+            line-height: 1.5;
+            -webkit-tap-highlight-color: transparent;
+            zoom: 0.75; 
+        }
+
+        header {
+            background-color: rgba(253, 250, 247, 0.98);
+            backdrop-filter: blur(8px);
+            padding: 10px 4%; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000;
+            border-bottom: 1px solid var(--soft-gray);
+            display: flex; 
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo { 
+            font-size: 22px; 
+            font-weight: 800; 
+            letter-spacing: 1px;
+            cursor: pointer; 
+            color: var(--accent-gold); 
+            text-transform: uppercase;
+        }
+        
+        .search-container { width: 100%; }
+        .search-container input {
+            width: 100%; 
+            padding: 10px 15px; 
+            border-radius: 20px;
+            border: 1px solid var(--soft-gray); 
+            background: var(--bg-color); 
+            box-sizing: border-box;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .cart-icon { 
+            cursor: pointer; 
+            position: relative; 
+            font-weight: 600; 
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            background: var(--soft-gray);
+        }
+
+        .main-banner {
+            width: 100%;
+            height: 30vh; 
+            min-height: 200px;
+            background-image: url('https://images.unsplash.com/photo-1603218678692-3967d7523bb0?q=80&w=1170&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center 30%;
+            box-shadow: 0 10px 20px var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .container { max-width: 1700px; margin: 0 auto; padding: 0 15px; }
+
+        h2 { font-size: 24px; text-align: center; margin-bottom: 25px; font-weight: 300; }
+
+        .category-hero {
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px; 
+            margin-bottom: 40px;
+        }
+        .hero-card {
+            height: 150px; border-radius: 8px; position: relative; overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 4px 10px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        .hero-card:hover { transform: scale(1.03); }
+        .hero-card img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .hero-content {
+            position: absolute; bottom: 0; width: 100%;
+            background: rgba(255,255,255,0.85); padding: 8px 0; text-align: center;
+            font-size: 14px; color: var(--accent-gold); font-weight: bold;
+        }
+
+        .products-grid {
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        @media (min-width: 768px) {
+            header { flex-direction: row; padding: 20px 5%; }
+            .header-top { width: auto; }
+            .search-container { max-width: 400px; margin: 0 20px; }
+            .products-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 30px; }
+            .main-banner { height: 500px; }
+            .hero-card { height: 250px; }
+        }
+
+        .product-card {
+            background: var(--card-bg); 
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center; 
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .img-box { height: 180px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .page { display: none; animation: fadeIn 0.4s ease; }
+        .active-page { display: block; }
+
+        .btn {
+            background: var(--accent-gold); color: white;
+            padding: 16px; border: none; border-radius: 8px;
+            font-weight: bold; cursor: pointer; width: 100%; font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .qty-selector { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 15px 0; }
+        .qty-btn { background: var(--soft-gray); border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; }
+        .qty-val { font-size: 20px; font-weight: bold; min-width: 30px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        footer {
+            margin-top: 50px;
+            padding: 30px 4%;
+            background-color: var(--soft-gray);
+            color: var(--text-main);
+            text-align: center;
+            border-top: 1px solid #d1c4b7;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 25px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .close-modal {
+            position: absolute; left: 20px; top: 15px;
+            font-size: 28px; cursor: pointer; color: #aaa;
+        }
+        .bit-img { width: 100%; border-radius: 15px; margin: 15px 0; }
+        
+        .form-group { text-align: right; margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid var(--soft-gray); border-radius: 8px; box-sizing: border-box; }
+        
+        .payment-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .pay-btn { padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; font-size: 16px; }
+        .btn-bit { background: var(--bit-blue); }
+        .btn-bank { background: #4a3f35; }
+
+        .loader-container { display: none; text-align: center; padding: 50px 0; }
+        .loader {
+            border: 5px solid var(--soft-gray);
+            border-top: 5px solid var(--accent-gold);
+            border-radius: 50%;
+            width: 50px; height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-top">
+        <div class="logo" onclick="showPage('home-page')">LUXE CANDLE</div>
+        <div class="cart-icon" onclick="showPage('cart-page')">
+            🛒 <span class="cart-count" id="cartCount">0</span>
+        </div>
+    </div>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="חפש מוצר..." oninput="handleSearch()">
+    </div>
+</header>
+
+<div class="main-banner"></div>
+
+<div class="container">
+    
+    <div id="home-page" class="page active-page">
+        <div class="category-hero" id="catHero">
+            <div class="hero-card" onclick="filterByCat('1')">
+                <img src="https://images.unsplash.com/photo-1603218678692-3967d7523bb0?q=80&w=1170&auto=format&fit=crop" alt="נרות">
+                <div class="hero-content">נרות</div>
+            </div>
+            <div class="hero-card" onclick="filterByCat('2')">
+                <img src="https://plus.unsplash.com/premium_photo-1671379493934-37f095ed5606?q=80&w=687&auto=format&fit=crop" alt="כלי בית">
+                <div class="hero-content">כלי בית</div>
+            </div>
+            <div class="hero-card" onclick="filterByCat('3')">
+                <img src="https://i.ibb.co/mVh0G8vz/image-2026-04-21-141739913.png" alt="מזוזות"> 
+                <div class="hero-content">קודש</div>
+            </div>
+        </div>
+
+        <h2 id="sectionTitle">הקולקציה שלנו</h2>
+        <div class="products-grid" id="mainGrid"></div>
+    </div>
+
+    <div id="product-detail-page" class="page">
+        <button onclick="showPage('home-page')" style="background:none; border:none; padding:10px 0; font-size:16px; cursor:pointer;">← חזרה</button>
+        <div id="detailView"></div>
+    </div>
+
+    <div id="cart-page" class="page">
+        <h2>הסל שלך</h2>
+        <div id="cartItems"></div>
+        <div style="margin-top: 30px; border-top: 2px solid var(--soft-gray); padding-top: 20px;">
+            <div style="font-size: 22px; font-weight: bold; display:flex; justify-content:space-between;">
+                <span>סה"כ לתשלום:</span>
+                <span><span id="cartTotal">0</span> ₪</span>
+            </div>
+            <button class="btn" onclick="showPage('checkout-details-page')">אישור רכישה</button>
+        </div>
+    </div>
+
+    <div id="checkout-details-page" class="page">
+        <h2>אנא מלא את הפרטים הבאים</h2>
+        
+        <p style="text-align: center; font-weight: bold; font-size: 18px; color: var(--accent-gold); margin-bottom: 20px;">
+            יש להעביר את הסכום המצויין: <span id="checkoutSumDisplay">0</span> ₪
+        </p>
+
+        <p style="text-align: center; font-weight: bold; font-size: 18px; color: var(--accent-gold); margin-bottom: 20px;">
+            במידה והסכום לא יהיה תואם הקניה לא תתקבל
+
+        </p>
+
+        <div style="max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow);">
+            <div class="form-group">
+                <label>שם מלא</label>
+                <input type="text" id="userName" placeholder="הכנס שם">
+            </div>
+            <div class="form-group">
+                <label>מספר טלפון</label>
+                <input type="tel" id="userPhone" placeholder="05X-XXXXXXX">
+            </div>
+            <div class="form-group">
+                <label>כתובת מגורים</label>
+                <input type="text" id="userAddress" placeholder="עיר, רחוב ומספר בית">
+            </div>
+
+            <div class="payment-btns">
+                <button class="pay-btn btn-bit" onclick="handlePayment('bit')">תשלום לביט</button>
+                <button class="pay-btn btn-bit" onclick="openPaymentModal('qr')">תשלום לביט דרך מחשב עם QR</button>
+                <button class="pay-btn btn-bank" onclick="openPaymentModal('bank')">העברה בנקאית</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="waiting-page" class="page">
+        <div class="loader-container" id="paymentLoader" style="display: block;">
+            <div class="loader"></div>
+            <h3>ממתין לתשלום...</h3>
+        </div>
+    </div>
+
+    <div id="upload-proof-page" class="page">
+        <div style="max-width: 500px; margin: 0 auto; text-align: center; background: white; padding: 30px; border-radius: 12px;">
+            <h2 style="color: green;">תודה רבה על קנייתך!</h2>
+            <p>לפני שנוכל לשלוח אליך את המוצר אנא שלח אסמכתא</p>
+            <input type="file" id="proofFile" accept="image/*" style="margin: 20px 0;">
+            <button class="btn" onclick="submitOrder()">שלח אסמכתא וסיים רכישה</button>
+        </div>
+    </div>
+
+</div>
+
+<div id="paymentModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closePaymentModal()">&times;</span>
+        <h3 id="modalTitle"></h3>
+        <img id="modalImg" src="" class="bit-img">
+        <p id="modalText"></p>
+        <button class="btn" onclick="handlePayment('modal-done')">שילמתי</button>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-info">
+        <span><strong>תמיכה טלפונית:</strong> 050-1234567</span>
+        <span><strong>שעות פתיחה:</strong> א'-ה' 09:00-19:00, ו' 09:00-14:00</span>
+    </div>
+    <div class="copyright">© כל הזכויות שמורות ל-LUXE CANDLE 2026</div>
+</footer>
+
+<script>
+    const products = [
+        { id: 1, cat: '1', title: "נר הבדלה פיסולי א", price: 120, imagePath: "https://i.ibb.co/hx5hQ778/Gemini-Generated-Image-9qjytc9qjytc9qjy.png", desc: "נר מעוצב בעבודת יד מוקפדת." },
+        { id: 2, cat: '1', title: "נר ארומטי יסמין", price: 85, imagePath: "https://i.ibb.co/XZBMbBb9/image-2026-04-20-222435231.png", desc: "ניחוח פרחוני ומרגיע לכל חלל." },
+        { id: 3, cat: '1', title: "סט נרות ורדים", price: 150, imagePath: "https://i.ibb.co/XrPVyTWx/image-2026-04-20-222732819.png", desc: "מארז 3 נרות בצורת ורדים." },
+        { id: 4, cat: '1', title: "נר בוטיק וניל", price: 95, imagePath: "https://images.unsplash.com/photo-1603218678692-3967d7523bb0?q=80&w=300&auto=format&fit=crop", desc: "ריח וניל עשיר ומתקתק." },
+        { id: 5, cat: '1', title: "נר מעוצב בזהב", price: 130, imagePath: "https://images.unsplash.com/photo-1570831739435-6601aa3fa4fb?q=80&w=300&auto=format&fit=crop", desc: "שילוב של יוקרה ואור." },
+        { id: 6, cat: '1', title: "נר עץ טבעי", price: 110, imagePath: "https://images.unsplash.com/photo-1596433809252-260c2745dfdd?q=80&w=300&auto=format&fit=crop", desc: "ניחוח יער טבעי." },
+        { id: 7, cat: '1', title: "נר הבדלה צבעוני", price: 70, imagePath: "https://images.unsplash.com/photo-1602872030219-5fbce37af1bf?q=80&w=300&auto=format&fit=crop", desc: "נר מסורתי בעיצוב רענן." },
+        { id: 8, cat: '1', title: "מארז נרות שבת", price: 60, imagePath: "https://images.unsplash.com/photo-1534073828943-f801091bb18c?q=80&w=300&auto=format&fit=crop", desc: "נרות איכותיים לשבת." },
+        { id: 9, cat: '1', title: "נר פצ'ולי", price: 90, imagePath: "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?q=80&w=300&auto=format&fit=crop", desc: "ניחוח עמוק ודומיננטי." },
+        { id: 10, cat: '1', title: "נר לילך", price: 85, imagePath: "https://images.unsplash.com/photo-1541459200234-8c09d3b10b0e?q=80&w=300&auto=format&fit=crop", desc: "פריחה אביבית בתוך הבית." },
+        
+        { id: 11, cat: '2', title: "מגש שיש יוקרתי", price: 220, imagePath: "https://plus.unsplash.com/premium_photo-1671379493934-37f095ed5606?q=80&w=300&auto=format&fit=crop", desc: "מגש להגשה או כבסיס לנרות." },
+        { id: 12, cat: '2', title: "אגרטל קרמיקה", price: 180, imagePath: "https://images.unsplash.com/photo-1581783898377-1c85bf937427?q=80&w=300&auto=format&fit=crop", desc: "עיצוב מודרני ונקי." },
+        { id: 13, cat: '2', title: "מעמד לנר מוזהב", price: 140, imagePath: "https://images.unsplash.com/photo-1605274280925-9dd1ba7466be?q=80&w=300&auto=format&fit=crop", desc: "מוסיף טאץ' יוקרתי לכל שולחן." },
+        { id: 14, cat: '2', title: "קערת נוי מזכוכית", price: 200, imagePath: "https://images.unsplash.com/photo-1513519245088-0e12902e35ca?q=80&w=300&auto=format&fit=crop", desc: "קערה רב תכליתית מעוצבת." },
+        { id: 15, cat: '2', title: "פמוטי קריסטל", price: 350, imagePath: "https://images.unsplash.com/photo-1574360897323-61fa01949053?q=80&w=300&auto=format&fit=crop", desc: "זוג פמוטים מרשימים." },
+        { id: 16, cat: '2', title: "מפיץ ריח דקורטיבי", price: 120, imagePath: "https://images.unsplash.com/photo-1614088685112-0a760b71a3c8?q=80&w=300&auto=format&fit=crop", desc: "כלי קרמיקה להפצת ריח." },
+        { id: 17, cat: '2', title: "פסלון אווירה", price: 160, imagePath: "https://images.unsplash.com/photo-1518131146536-124b58836ce5?q=80&w=300&auto=format&fit=crop", desc: "יצירת אמנות קטנה לבית." },
+        { id: 18, cat: '2', title: "מראה עם מסגרת עץ", price: 450, imagePath: "https://images.unsplash.com/photo-1618220179428-22790b461013?q=80&w=300&auto=format&fit=crop", desc: "מראה גוף מעוצבת." },
+        { id: 19, cat: '2', title: "סט כוסות יוקרה", price: 280, imagePath: "", desc: "זכוכית איכותית בגימור בעבודת יד." },
+        { id: 20, cat: '2', title: "שעון קיר מעוצב", price: 190, imagePath: "", desc: "אלגנטיות ודיוק." },
+
+        { id: 21, cat: '3', title: "מזוזה ארץ ישראל גדול", price: 250, imagePath: "https://i.ibb.co/XfnHhQBT/image-2026-04-21-142236399.png", desc: "מזוזת ארץ ישראל גדולה ושקופה עם צבעים." },
+        { id: 22, cat: '3', title: "מזוזה ארץ ישראל גודל בינוני ", price: 200, imagePath: "https://i.ibb.co/pt4ytNd/image-2026-04-21-142332711.png", desc: "מזוזת ארץ ישראל בגודל בינוני ושקופה עם צבעים." },
+        { id: 23, cat: '3', title: "מזוזה פרחים מעוצבת", price: 70, imagePath: "https://i.ibb.co/1DRDSpt/image-2026-04-21-142719690.png", desc: "מזוזה צבעונית שקופה פירחונית." },
+        { id: 24, cat: '3', title: "פלטה מאפוקסי עם ברכת נרות שבת", price: 150, imagePath: "https://i.ibb.co/YFFgYg9G/image-2026-04-21-143418872.png", desc: "פלטה מאפוקסי עם ברכת נרות שבת." },
+        { id: 25, cat: '3', title: "כוס קידוש בורא פרי הגפן", price: 100, imagePath: "https://i.ibb.co/SXPXFnH8/image-2026-04-21-143851873.png", desc: "כוס קידוש בורא פרי הגפן מאפוקסי." },
+        { id: 26, cat: '3', title: "מפיץ מקלות הדרים", price: 115, imagePath: "", desc: "ריח תפוז ולימון רענן." },
+        { id: 27, cat: '3', title: "מפיץ ריח לרכב", price: 40, imagePath: "", desc: "לנסיעה נעימה במיוחד." },
+        { id: 28, cat: '3', title: "נרות צפים ריחניים", price: 75, imagePath: "", desc: "מתאים לאירועים מיוחדים." },
+        { id: 29, cat: '3', title: "קטורת פרימיום", price: 65, imagePath: "", desc: "ניחוח אוריינטלי מרגיע." },
+        { id: 30, cat: '3', title: "מארז מתנה ריחני", price: 320, imagePath: "", desc: "כולל נר, מפיץ וספריי ריח." }
+    ];
+
+    let cart = [];
+    let selectedProduct = null;
+    let currentQty = 1;
+
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        document.getElementById(pageId).classList.add('active-page');
+        window.scrollTo(0,0);
+    }
+
+    function renderProducts(list) {
+        const grid = document.getElementById('mainGrid');
+        grid.innerHTML = '';
+        list.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.onclick = () => openDetails(p);
+            card.innerHTML = `
+                <div class="img-box"><img src="${p.imagePath}" loading="lazy"></div>
+                <div style="font-weight:600; padding:10px;">${p.title}</div>
+                <div style="font-weight:bold; padding-bottom:10px;">${p.price} ₪</div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function openDetails(p) {
+        selectedProduct = p;
+        currentQty = 1;
+        document.getElementById('detailView').innerHTML = `
+            <div style="background:white; padding:20px; border-radius:12px; box-shadow:var(--shadow);">
+                <img src="${p.imagePath}" style="width:100%; border-radius:12px; max-height:400px; object-fit:cover;">
+                <h1>${p.title}</h1>
+                <div style="font-size:24px; font-weight:bold; margin:10px 0;">${p.price} ₪</div>
+                <p>${p.desc}</p>
+                <div class="qty-selector">
+                    <button class="qty-btn" onclick="changeQty(-1)">-</button>
+                    <span class="qty-val" id="qtyVal">1</span>
+                    <button class="qty-btn" onclick="changeQty(1)">+</button>
+                </div>
+                <button class="btn" onclick="addToCart()">הוסף לסל הקניות</button>
+            </div>
+        `;
+        showPage('product-detail-page');
+    }
+
+    function changeQty(delta) {
+        if (currentQty + delta >= 1) {
+            currentQty += delta;
+            document.getElementById('qtyVal').innerText = currentQty;
+        }
+    }
+
+    function addToCart() {
+        for(let i = 0; i < currentQty; i++) {
+            cart.push({...selectedProduct});
+        }
+        updateCart();
+        showPage('home-page');
+    }
+
+    function updateCart() {
+        document.getElementById('cartCount').innerText = cart.length;
+        const container = document.getElementById('cartItems');
+        container.innerHTML = '';
+        let total = 0;
+        cart.forEach((item, index) => {
+            total += item.price;
+            container.innerHTML += `
+                <div style="background:white; padding:15px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><strong>${item.title}</strong><br>${item.price} ₪</div>
+                    <button onclick="removeItem(${index})" style="background:#ff4444; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">הסר</button>
+                </div>`;
+        });
+        
+        // עדכון הסכום בכל המקומות באתר
+        document.getElementById('cartTotal').innerText = total;
+        if(document.getElementById('checkoutSumDisplay')) {
+            document.getElementById('checkoutSumDisplay').innerText = total;
+        }
+    }
+
+    function removeItem(index) {
+        cart.splice(index, 1);
+        updateCart();
+    }
+
+    function handleSearch() {
+        const val = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = products.filter(p => p.title.toLowerCase().includes(val));
+        renderProducts(filtered);
+    }
+
+    function filterByCat(cat) {
+        const filtered = products.filter(p => p.cat === cat);
+        renderProducts(filtered);
+    }
+
+    function openPaymentModal(type) {
+        const modal = document.getElementById('paymentModal');
+        const img = document.getElementById('modalImg');
+        const title = document.getElementById('modalTitle');
+        
+        if(type === 'qr') {
+            title.innerText = "סרוק לתשלום בביט";
+            img.src = "https://i.ibb.co/67m3W4q3/image-2026-04-21-144613844.png"; 
+        } else {
+            title.innerText = "פרטי העברה בנקאית";
+            img.src = "https://i.ibb.co/67m3W4q3/image-2026-04-21-144613844.png"; 
+        }
+        modal.style.display = "block";
+    }
+
+    function closePaymentModal() {
+        document.getElementById('paymentModal').style.display = "none";
+    }
+
+    function handlePayment(method) {
+        const name = document.getElementById('userName').value;
+        const phone = document.getElementById('userPhone').value;
+        if(!name || !phone) { alert("אנא מלא פרטי קשר (שם וטלפון)"); return; }
+
+        if(method === 'bit') {
+            window.open("https://www.bitpay.co.il/app/me/64DE1548-6E0D-5C98-F3B4-DEAA9E54D36FD9D3", "_blank");
+        }
+        
+        closePaymentModal();
+        showPage('waiting-page');
+        
+        setTimeout(() => {
+            showPage('upload-proof-page');
+        }, 2000);
+    }
+
+    async function submitOrder() {
+        const fileInput = document.getElementById('proofFile');
+        const name = document.getElementById('userName').value;
+        const phone = document.getElementById('userPhone').value;
+        const address = document.getElementById('userAddress').value;
+        const total = document.getElementById('cartTotal').innerText;
+
+        if(!fileInput.files[0]) {
+            alert("חובה להעלות תמונת אסמכתא להמשך.");
+            return;
+        }
+
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1496089290244100106/4HzPKo_No4tebNO937Tm4gFrXCc3ZSXfvaL1ThONKMIzUgRBRpSThhoVkBvNGD1H_VWk";
+
+        let orderedItems = cart.map(item => item.title).join(", ");
+        if (!orderedItems) orderedItems = "אין מוצרים בסל";
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0], 'receipt.png');
+
+        const payload = {
+            content: "🛍️ **הזמנה חדשה עם אסמכתא התקבלה!**",
+            embeds: [{
+                title: "פרטי רכישה",
+                color: 15105570,
+                fields: [
+                    { name: "שם לקוח", value: name, inline: true },
+                    { name: "טלפון", value: phone, inline: true },
+                    { name: "כתובת", value: address },
+                    { name: "מוצרים שהוזמנו", value: orderedItems },
+                    { name: "סה\"כ לתשלום", value: total + " ₪" },
+                    { name: "סטטוס", value: "ממתין לאישור תשלום (תמונה מצורפת)" }
+                ],
+                timestamp: new Date()
+            }]
+        };
+
+        formData.append('payload_json', JSON.stringify(payload));
+
+        try {
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                body: formData 
+            });
+
+            if (response.ok) {
+                alert("ההזמנה והאסמכתא נשלחו בהצלחה לצוות שלנו!");
+                cart = [];
+                updateCart();
+                showPage('home-page');
+            } else {
+                alert("הייתה שגיאה בשליחת התמונה.");
+            }
+        } catch (error) {
+            alert("שגיאת תקשורת.");
+        }
+    }
+
+    renderProducts(products);
+</script>
+
+</body>
+</html>
